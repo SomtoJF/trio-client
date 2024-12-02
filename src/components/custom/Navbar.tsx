@@ -58,8 +58,11 @@ export function Navbar({ className }: { className?: string }) {
 			</ul>
 			{user ? (
 				<NavDropdown>
-					<div className="w-10 h-10 rounded-full bg-neutral-800 text-white md:flex hidden justify-center items-center">
-						{user.fullName.split(" ").map((name) => name.charAt(0))}
+					<div className="w-10 h-10 rounded-full bg-neutral-800 text-white md:flex hidden justify-center items-center cursor-pointer">
+						{user.fullName
+							.toUpperCase()
+							.split(" ")
+							.map((name) => name.charAt(0))}
 					</div>
 				</NavDropdown>
 			) : (

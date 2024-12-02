@@ -14,14 +14,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const currentUserQuery = useQuery({
 		queryKey: queryKeys.user.currentUser(),
 		queryFn: getCurrentUser,
-		retry: false,
+		refetchInterval: 60000,
+		refetchOnWindowFocus: true,
+		retry: 2,
 	});
 
 	useEffect(() => {
 		if (!currentUserQuery.isFetching) setUser(currentUserQuery.data ?? null);
 	}, [currentUserQuery.isFetching, currentUserQuery.data]);
 
-	if (currentUserQuery.isPending || currentUserQuery.isFetching) {
+	if (currentUserQuery.isPending) {
 		return <LoadingScreen />;
 	} else if (currentUserQuery.isError) {
 		push("/login");

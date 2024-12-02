@@ -19,6 +19,7 @@ import { z } from "zod";
 import { login } from "@/services";
 import { queryKeys } from "@/query-key-factory";
 import { useToast } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
 	userName: z
@@ -38,6 +39,7 @@ const formSchema = z.object({
 export default function Page() {
 	const toast = useToast();
 	const queryClient = useQueryClient();
+	const { push } = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -51,6 +53,9 @@ export default function Page() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
 			toast.success("Login successful");
+			setTimeout(() => {
+				push("/chat/new");
+			}, 1000);
 		},
 		onError: (error) => {
 			toast.error(error.message);
