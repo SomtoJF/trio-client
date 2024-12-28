@@ -62,7 +62,7 @@ export default function Page() {
 			}, 2000);
 		},
 		onError: (error) => {
-			toast.error("We couldn't create your account");
+			toast.error(error.message);
 			throw error;
 		},
 	});

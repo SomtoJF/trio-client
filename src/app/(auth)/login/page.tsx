@@ -12,7 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AiOutlineLoading } from "react-icons/ai";
+import {
+	AiOutlineEye,
+	AiOutlineEyeInvisible,
+	AiOutlineLoading,
+} from "react-icons/ai";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,6 +24,7 @@ import { login } from "@/services";
 import { queryKeys } from "@/query-key-factory";
 import { useToast } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const formSchema = z.object({
 	userName: z
@@ -40,6 +45,7 @@ export default function Page() {
 	const toast = useToast();
 	const queryClient = useQueryClient();
 	const { push } = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -99,7 +105,24 @@ export default function Page() {
 								<FormItem>
 									<FormLabel className="font-bold text-sm">Password</FormLabel>
 									<FormControl>
-										<Input placeholder="*******" {...field} type="password" />
+										<div className="relative">
+											<Input
+												placeholder="*******"
+												{...field}
+												type={showPassword ? "text" : "password"}
+											/>
+											<button
+												type="button"
+												onClick={() => setShowPassword(!showPassword)}
+												className="absolute right-3 top-1/2 -translate-y-1/2"
+											>
+												{showPassword ? (
+													<AiOutlineEyeInvisible className="h-4 w-4 text-gray-500" />
+												) : (
+													<AiOutlineEye className="h-4 w-4 text-gray-500" />
+												)}
+											</button>
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

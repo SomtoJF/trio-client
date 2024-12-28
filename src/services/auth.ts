@@ -34,7 +34,8 @@ export const signout = async () => {
 		method: "POST",
 		credentials: "include",
 	});
-	if (res.status > 299) throw new Error(res.statusText);
+	const data = await res.json();
+	if (res.status > 299) throw new Error(data.error ?? res.statusText);
 };
 
 export async function signUp(data: SignUpType): Promise<void> {
@@ -43,5 +44,7 @@ export async function signUp(data: SignUpType): Promise<void> {
 		credentials: "include",
 		body: JSON.stringify(data),
 	});
-	if (response.status > 299) throw new Error(response.statusText);
+	const result = await response.json();
+	if (response.status > 299)
+		throw new Error(result.error ?? response.statusText);
 }
