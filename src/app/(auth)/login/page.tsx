@@ -20,11 +20,12 @@ import {
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { login } from "@/services";
+import { guestLogin, login } from "@/services";
 import { queryKeys } from "@/query-key-factory";
 import { useToast } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CircleUserRound } from "lucide-react";
 
 const formSchema = z.object({
 	userName: z
@@ -69,19 +70,55 @@ export default function Page() {
 		},
 	});
 
+	const guestLoginMutation = useMutation({
+		mutationFn: () => guestLogin(),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
+			toast.success("Guest login successful");
+			setTimeout(() => {
+				push("/chat/new");
+			}, 1000);
+		},
+		onError: (error) => {
+			toast.error(error.message);
+			throw error;
+		},
+	});
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		loginMutation.mutate(values);
 	}
 
 	return (
 		<div className="w-full h-full flex justify-end">
-			<section className="w-full p-10 lg:p-20 space-y-8 bg-white text-black rounded-xl lg:h-full">
+			<section className="w-full p-10 lg:p-20 space-y-6 bg-white text-black rounded-xl lg:h-full">
 				<div>
 					<h2 className="font-bold text-2xl">Welcome back</h2>
 					<p className="text-gray-500">
 						Ready to continue the conversation? Log in and pick up right where
 						you left off.
 					</p>
+				</div>
+				<div className="flex justify-between gap-2 items-center">
+					<hr className="w-full" />
+					<p className="text-gray-500">Or</p>
+					<hr className="w-full" />
+				</div>
+				<div className="flex flex-col justify-center items-center gap-2">
+					<Button
+						onClick={() => guestLoginMutation.mutate()}
+						className="w-full"
+						variant="outline"
+					>
+						{guestLoginMutation.isPending ? (
+							<AiOutlineLoading className="animate-spin" />
+						) : (
+							<>
+								<CircleUserRound className="w-6 h-6" />
+								Continue as guest
+							</>
+						)}
+					</Button>
 				</div>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

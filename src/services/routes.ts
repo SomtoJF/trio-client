@@ -24,6 +24,7 @@ const Chats = createPrefixedRoutes("chats", chatRoutes);
 
 const routeConfig = {
 	Login: "login",
+	GuestLogin: "login/guest",
 	SignOut: "logout",
 	SignUp: "signup",
 	Me: "me",

@@ -29,6 +29,14 @@ export async function login(data: {
 	if (response.status > 299) throw new Error(response.statusText);
 }
 
+export const guestLogin = async () => {
+	const response = await fetch(`${BaseRoute}/${Route.GuestLogin}`, {
+		method: "POST",
+		credentials: "include",
+	});
+	if (response.status > 299) throw new Error(response.statusText);
+};
+
 export const signout = async () => {
 	const res = await fetch(`${BaseRoute}/${Route.SignOut}`, {
 		method: "POST",
