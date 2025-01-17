@@ -26,10 +26,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	if (currentUserQuery.isPending || currentUserQuery.isFetching) {
 		return <LoadingScreen />;
 	} else if (currentUserQuery.isSuccess) {
-		toast.warning("You need to signout first");
 		setTimeout(() => {
 			push("/");
-		}, 2000);
+		}, 1000);
 	} else
 		return (
 			<div className="bg-neutral-950 relative antialiased">

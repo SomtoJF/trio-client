@@ -20,7 +20,8 @@ const chatRoutes = {
 	Default: "",
 } as const;
 
-const Chats = createPrefixedRoutes("chats", chatRoutes);
+const BasicChats = createPrefixedRoutes("basic-chats", chatRoutes);
+const ReflectionChats = createPrefixedRoutes("reflection-chats", chatRoutes);
 
 const routeConfig = {
 	Login: "login",
@@ -28,7 +29,8 @@ const routeConfig = {
 	SignOut: "logout",
 	SignUp: "signup",
 	Me: "me",
-	Chats,
+	BasicChats,
+	ReflectionChats,
 } as const;
 
 export type Route = typeof routeConfig;
