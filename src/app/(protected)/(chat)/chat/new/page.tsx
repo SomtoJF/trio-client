@@ -171,7 +171,9 @@ export default function Page() {
 	const createBasicChatMutation = useMutation({
 		mutationFn: (data: z.infer<typeof formSchema>) => createBasicChat(data),
 		onSuccess: (response) => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.chat.all });
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.chat.getBasicChats(),
+			});
 			toast.success("Chat created");
 			setTimeout(() => {
 				push(`/chat/${response.data.id}`);
@@ -187,7 +189,9 @@ export default function Page() {
 		mutationFn: (data: z.infer<typeof reflectionFormSchema>) =>
 			createReflectionChat(data),
 		onSuccess: (response) => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.chat.all });
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.chat.getReflectionChats(),
+			});
 			toast.success("Chat created");
 			setTimeout(() => {
 				push(`/chat/${response.data.id}`);

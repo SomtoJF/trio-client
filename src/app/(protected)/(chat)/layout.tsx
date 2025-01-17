@@ -9,44 +9,73 @@ import { NavDropdown } from "@/components/custom";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/query-key-factory";
-import { currentUserChats } from "@/services";
-import { ChatType } from "@/types";
-import { BiReflectVertical } from "react-icons/bi";
-import { TfiLayoutWidthDefaultAlt } from "react-icons/tfi";
+import { getBasicChats, getReflectionChats } from "@/services";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+
+interface SidebarLink {
+	id: string;
+	label: string;
+	href: string;
+	icon: React.ReactNode;
+}
 
 export default function Layout({ children }: { children: ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const { user } = useAuthStore((state) => state);
-	const [links, setLinks] = useState([
-		{
-			label: "New Chat",
-			href: "/chat/new",
-			icon: <PiNotePencilBold className=" h-5 w-5 flex-shrink-0" />,
-		},
-	]);
-	const { data: chats } = useQuery({
-		queryKey: queryKeys.chat.getMany(),
-		queryFn: currentUserChats,
+	const [reflectionChatLinks, setReflectionChatLinks] = useState<SidebarLink[]>(
+		[]
+	);
+	const [basicChatLinks, setBasicChatLinks] = useState<SidebarLink[]>([]);
+
+	const { data: reflectionChats, isFetching: isFetchingReflectionChats } =
+		useQuery({
+			queryKey: queryKeys.chat.getReflectionChats(),
+			queryFn: () => getReflectionChats(),
+			enabled: !!user,
+		});
+
+	const { data: basicChats, isFetching: isFetchingBasicChats } = useQuery({
+		queryKey: queryKeys.chat.getBasicChats(),
+		queryFn: () => getBasicChats(),
 		enabled: !!user,
 	});
 
 	useEffect(() => {
-		if (chats && chats.length > 0) {
-			const chatnames = chats.map((chat) => {
-				return {
+		if (basicChats && !isFetchingBasicChats) {
+			setBasicChatLinks(
+				basicChats.map((chat) => ({
+					id: chat.id,
 					label: chat.chatName,
-					href: `/chat/${chat.id}`,
-					icon:
-						chat.type === ChatType.REFLECTION ? (
-							<BiReflectVertical className=" h-5 w-5 flex-shrink-0" />
-						) : (
-							<TfiLayoutWidthDefaultAlt className=" h-5 w-5 flex-shrink-0" />
-						),
-				};
-			});
-			setLinks([links[0], ...chatnames]);
+					href: `/chat/basic/${chat.id}`,
+					icon: <></>,
+				}))
+			);
 		}
-	}, [chats]);
+	}, [basicChats, isFetchingBasicChats]);
+
+	useEffect(() => {
+		if (reflectionChats && !isFetchingReflectionChats) {
+			setReflectionChatLinks(
+				reflectionChats.map((chat) => ({
+					id: chat.id,
+					label: chat.chatName,
+					href: `/chat/reflection/${chat.id}`,
+					icon: <></>,
+				}))
+			);
+		}
+	}, [reflectionChats, isFetchingReflectionChats]);
+
+	const link = {
+		label: "New Chat",
+		href: "/chat/new",
+		icon: <PiNotePencilBold className=" h-4 w-4 ml-2 flex-shrink-0" />,
+	};
 
 	return (
 		<div
@@ -65,9 +94,30 @@ export default function Layout({ children }: { children: ReactNode }) {
 							My Chats
 						</p>
 						<div className="flex flex-col gap-2">
-							{links.map((link, idx) => (
-								<SidebarLink key={idx} link={link} />
-							))}
+							<SidebarLink link={link} className="text-white" />
+
+							<Accordion type="single" collapsible className="w-full">
+								<AccordionItem value="item-1" className="border-none">
+									<AccordionTrigger className="hover:no-underline text-sm border-none hover:bg-neutral-700 rounded-lg whitespace-nowrap text-ellipsis pl-2">
+										Basic Chats
+									</AccordionTrigger>
+									<AccordionContent className="flex flex-col gap-2 pl-4">
+										{basicChatLinks.map((link) => (
+											<SidebarLink link={link} key={link.id} />
+										))}
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem value="item-2" className="border-none">
+									<AccordionTrigger className="hover:no-underline text-sm border-none hover:bg-neutral-700 rounded-lg whitespace-nowrap text-ellipsis pl-2">
+										Reflection Chats
+									</AccordionTrigger>
+									<AccordionContent className="flex flex-col gap-2 pl-4">
+										{reflectionChatLinks.map((link) => (
+											<SidebarLink link={link} key={link.id} />
+										))}
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
 						</div>
 					</div>
 					<div>

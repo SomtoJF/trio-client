@@ -8,6 +8,15 @@ interface CreateBasicChatData {
 	}[];
 }
 
+interface BasicChat {
+	id: string;
+	chatName: string;
+	agents: {
+		agentName: string;
+		agentTraits: string[];
+	}[];
+}
+
 export async function createBasicChat(data: CreateBasicChatData) {
 	const res = await fetch(`${BaseRoute}/${Route.BasicChats.Default}`, {
 		method: "POST",
@@ -23,7 +32,7 @@ export async function createBasicChat(data: CreateBasicChatData) {
 	return result;
 }
 
-export async function getBasicChats() {
+export async function getBasicChats(): Promise<BasicChat[]> {
 	const res = await fetch(`${BaseRoute}/${Route.BasicChats.Default}`, {
 		method: "GET",
 		credentials: "include",
@@ -31,7 +40,7 @@ export async function getBasicChats() {
 	const result = await res.json();
 	if (res.status > 299)
 		throw new Error(result.error ?? "Failed to get basic chats");
-	return result;
+	return result.data ?? ([] as BasicChat[]);
 }
 
 export async function updateBasicChat(
