@@ -176,7 +176,7 @@ export default function Page() {
 			});
 			toast.success("Chat created");
 			setTimeout(() => {
-				push(`/chat/${response.data.id}`);
+				push(`/chat/basic/${response.data.id}`);
 			}, 2000);
 		},
 		onError: (error) => {
@@ -194,7 +194,7 @@ export default function Page() {
 			});
 			toast.success("Chat created");
 			setTimeout(() => {
-				push(`/chat/${response.data.id}`);
+				push(`/chat/reflection/${response.data.id}`);
 			}, 2000);
 		},
 		onError: (error) => {
@@ -297,25 +297,6 @@ export default function Page() {
 												<FormControl>
 													<Input placeholder="i.e 'Claudia'" {...field} />
 												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={basicChatForm.control}
-										name={`agents.${index}.agentTraits`}
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Lingo<span className="text-red-500">*</span>
-												</FormLabel>
-												<FormControl>
-													<Input placeholder="i.e 'Patois'" {...field} />
-												</FormControl>
-												<FormDescription>
-													Lingo determines slangs and in general, the language
-													with which the agent responds. e.g Pidgin, English.
-												</FormDescription>
 												<FormMessage />
 											</FormItem>
 										)}

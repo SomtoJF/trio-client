@@ -52,19 +52,13 @@ export default function Index() {
 					custom personalities and traits to group chats.
 				</p>
 				<div className="flex gap-10 self-center">
-					<Button className="bg-white p-0 rounded-lg text-black hover:bg-gray-200">
+					<Button className="bg-white w-[200px] max-w-sm p-0 rounded-lg text-black hover:bg-gray-200">
 						<Link
-							href={user ? "/chat" : "/login"}
+							href={user ? "/chat/new" : "/login"}
 							className="w-full h-full flex justify-center items-center px-8 py-4"
 						>
 							Get Started
 						</Link>
-					</Button>
-					<Button
-						variant={"outline"}
-						className=" px-8 py-4 bg-transparent rounded-lg border-solid border-[1px] border-gray-200"
-					>
-						Learn More
 					</Button>
 				</div>
 			</section>
