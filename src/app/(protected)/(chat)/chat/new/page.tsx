@@ -246,7 +246,7 @@ export default function Page() {
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger className="w-full">
-										<p className="text-xs cursor-pointer w-full p-2 text-center rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center">
+										<p className="text-xs cursor-pointer w-full p-2 text-center rounded-lg bg-fuchsia-100 text-fuchsia-800 flex items-center justify-center">
 											<Info className="mr-2 w-4 h-4" /> What is a basic chat?
 										</p>
 									</TooltipTrigger>
@@ -374,7 +374,7 @@ export default function Page() {
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger className="w-full">
-										<p className="text-xs cursor-pointer w-full p-2 text-center rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center">
+										<p className="text-xs cursor-pointer w-full p-2 text-center rounded-lg bg-fuchsia-100 text-fuchsia-800 flex items-center justify-center">
 											<Info className="mr-2 w-4 h-4" /> What is a reflection
 											chat?
 										</p>

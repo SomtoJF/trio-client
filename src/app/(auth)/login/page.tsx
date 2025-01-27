@@ -99,11 +99,6 @@ export default function Page() {
 						you left off.
 					</p>
 				</div>
-				<div className="flex justify-between gap-2 items-center">
-					<hr className="w-full" />
-					<p className="text-gray-500">Or</p>
-					<hr className="w-full" />
-				</div>
 				<div className="flex flex-col justify-center items-center gap-2">
 					<Button
 						onClick={() => guestLoginMutation.mutate()}
@@ -120,6 +115,13 @@ export default function Page() {
 						)}
 					</Button>
 				</div>
+
+				<div className="flex justify-between gap-2 items-center">
+					<hr className="w-full" />
+					<p className="text-gray-500">Or</p>
+					<hr className="w-full" />
+				</div>
+
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<FormField
