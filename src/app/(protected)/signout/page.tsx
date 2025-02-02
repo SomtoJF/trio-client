@@ -1,24 +1,30 @@
 "use client";
 
 import { signout } from "@/services";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { useAuthStore, useToast } from "@/hooks";
+import { queryKeys } from "@/query-key-factory";
 
 export default function Page() {
 	const toast = useToast();
 	const setUser = useAuthStore((state) => state.setUser);
 	const { push } = useRouter();
+	const queryClient = useQueryClient();
+
 	const signoutMutation = useMutation({
 		mutationFn: signout,
-		onSuccess: () => {
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.user.currentUser(),
+			});
 			setUser(null);
 			toast.success("signout successful");
 			setTimeout(() => {
 				push("/");
-			}, 2000);
+			}, 1000);
 		},
 		onError: (error) => {
 			toast.error("We couldn't log you out");
