@@ -10,13 +10,13 @@ export interface Reflection {
 	id: string;
 	createdAt: string;
 	updatedAt: string;
-	chatId: string;
 	messages: ReflectionMessage[];
 }
 
 export interface ReflectionMessage {
 	id: string;
 	content: string;
+	senderName: string;
 	isOptimal: boolean;
 	createdAt: string;
 	updatedAt: string;
