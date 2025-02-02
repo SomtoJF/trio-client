@@ -1,16 +1,36 @@
 "use client";
 
+import { SparklesCore } from "@/components/ui/sparkles";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuthStore } from "@/hooks";
+import { cn } from "@/lib/utils";
 import { queryKeys } from "@/query-key-factory";
 import {
 	getChatReflections,
 	getReflectionChat,
 	sendReflectionMessage,
 } from "@/services";
-import { User } from "@/types";
+import {
+	Reflection,
+	ReflectionMessage as ReflectionMessageType,
+	User,
+} from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Bot, MoonStar, SquarePi, WholeWord } from "lucide-react";
+import {
+	Bot,
+	BrainCog,
+	ChevronsRight,
+	FlipHorizontal2,
+	MoonStar,
+	SquarePi,
+	WholeWord,
+} from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -68,12 +88,67 @@ export default function Page() {
 		sendReflectionMessage(reflectionId as string, { content: message });
 	};
 
+	const mockReflections: Reflection[] = [
+		{
+			id: "1",
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			messages: [
+				{
+					id: "msg-1",
+					content:
+						"How can we model the cascading effects of Arctic permafrost thaw on global climate systems, considering feedback loops and methane release?",
+					isOptimal: false,
+					senderName: "currentUser",
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+				},
+				{
+					id: "msg-2",
+					content:
+						"The model should focus on direct temperature impacts and methane release rates. We can use existing climate models like CMIP6 and add permafrost-specific parameters.",
+					isOptimal: false,
+					senderName: "Reflector",
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+				},
+				{
+					id: "msg-3",
+					content:
+						"We should also consider economic impacts and policy scenarios in the model, including carbon pricing and mitigation strategies.",
+					isOptimal: false,
+					senderName: "Reflector",
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+				},
+				{
+					id: "msg-4",
+					content:
+						"A comprehensive model would need to integrate multiple components:\n1. Thermal dynamics of permafrost degradation\n2. Biogeochemical processes (methane & CO2 release)\n3. Ocean-atmosphere coupling\n4. Vegetation changes\n5. Albedo feedback effects\n\nWe should use a coupled Earth System Model (ESM) that combines:\n- Land surface processes (CLM5)\n- Atmospheric chemistry (WACCM)\n- Ocean circulation (POP2)\n- Sea ice dynamics (CICE)\n\nKey feedback loops to model:\n- Permafrost thaw → GHG release → warming → more thaw\n- Ice loss → albedo change → warming → more ice loss\n- Vegetation shifts → carbon cycle changes → atmospheric composition\n\nTime scales: Run simulations from decades to centuries, with spatial resolution of 0.5° grid cells.",
+					isOptimal: true,
+					senderName: "Reflector",
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+				},
+			],
+		},
+	];
+
 	return (
 		<div className="w-full h-full flex flex-col justify-between items-center gap-5 sm:px-[10%] px-4 relative">
-			<div className="absolute top-0 left-0">{reflectionChat?.chatName}</div>
+			<div className="absolute top-0 left-0 text-white">
+				{reflectionChat?.chatName}
+			</div>
 			<div className="h-[95%] w-full">
 				{/* TODO: Messages go here */}
-				{isChatEmpty && <MessageExample setMessage={setMessage} user={user} />}
+				{/* {isChatEmpty && <MessageExample setMessage={setMessage} user={user} />} */}
+				{mockReflections.map((reflection) => (
+					<ReflectionMessage
+						key={reflection.id}
+						reflection={reflection}
+						userName="currentUser"
+					/>
+				))}
 			</div>
 			<div className="absolute bottom-0 w-full z-10 flex flex-col sm:px-[10%] px-4 gap-4 bg-black shadow-[0_-15px_20px_0px_rgba(0,0,0,0.9)]">
 				<form onSubmit={onSendMessage}>
@@ -82,7 +157,7 @@ export default function Page() {
 						className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-3xl px-4"
 					>
 						<Textarea
-							placeholder="Ask me about quantum mechanics, artificial intelligence, or the nature of reality..."
+							placeholder="Ask me anything..."
 							className="flex-1 rounded-3xl bg-neutral-900 text-white outline-none border-none focus-visible:ring-0 focus-visible:ring-offset-0
 							 focus-visible:border-none h-fit resize-none min-h-[40px] max-h-[200px] overflow-y-auto"
 							id="message-input"
@@ -149,6 +224,97 @@ function MessageExample({
 						<p>{message.text}</p>
 					</div>
 				))}
+			</div>
+		</div>
+	);
+}
+
+function ReflectionMessage({
+	reflection,
+	userName,
+}: {
+	reflection: Reflection;
+	userName: string;
+}) {
+	const [featuredMessage, setFeaturedMessage] =
+		useState<ReflectionMessageType | null>(null);
+
+	const userMessage = reflection.messages.find(
+		(message) => message.senderName === userName
+	);
+
+	const reflectorMessages = reflection.messages.filter(
+		(message) => message.senderName !== userName
+	);
+
+	const optimalMessage = reflection.messages.find(
+		(message) => message.isOptimal === true
+	);
+
+	useEffect(() => {
+		if (optimalMessage) {
+			setFeaturedMessage(optimalMessage);
+		}
+	}, [optimalMessage]);
+
+	return (
+		<div className="w-full h-full flex flex-col text-sm items-center gap-10">
+			{userMessage && (
+				<div className="self-end px-3 py-2 bg-purple-100 text-black rounded-xl max-w-[70%]">
+					{userMessage.content}
+				</div>
+			)}
+			{featuredMessage && (
+				<div className="self-start grid grid-cols-[25px,1fr] grid-rows-1 gap-3">
+					<BrainCog className="text-purple-800 border border-gray-700 bg-purple-100 rounded-full p-1" />
+					<p>{featuredMessage.content}</p>
+				</div>
+			)}
+			<div className="flex gap-2 justify-start w-full px-[25px] overflow-x-auto overflow-y-hidden">
+				{reflectorMessages.map((message) => (
+					<div
+						className={cn(
+							"px-3 py-2 bg-neutral-900 rounded-xl flex flex-col gap-2 cursor-pointer hover:bg-neutral-800 transition-colors relative",
+							message.isOptimal && "border border-gray-800",
+							message.id === featuredMessage?.id && "bg-neutral-800"
+						)}
+						onClick={() => setFeaturedMessage(message)}
+						key={message.id}
+					>
+						{message.isOptimal && (
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild className="absolute inset-0">
+										<div className="w-full absolute inset-0 h-screen">
+											<SparklesCore
+												id="tsparticlesfullpage"
+												background="transparent"
+												minSize={0.6}
+												maxSize={1.4}
+												particleDensity={100}
+												className="w-full h-full"
+												particleColor="#FFFFFF"
+											/>
+										</div>
+									</TooltipTrigger>
+									<TooltipContent className="text-xs" side="bottom">
+										This is the optimal answer
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+						)}
+						<p className="self-start text-xs text-white line-clamp-4 overflow-hidden text-ellipsis w-[200px] ">
+							{message.content}
+						</p>
+						<p className="text-xs text-neutral-400 flex items-center gap-1">
+							<FlipHorizontal2 className="w-4 h-4 mr-1" />
+							{message.senderName}
+						</p>
+					</div>
+				))}
+				<p className="text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer h-fit self-end px-3 py-2 text-nowrap flex">
+					View generation sequence <ChevronsRight className="w-4 h-4 ml-1" />
+				</p>
 			</div>
 		</div>
 	);
