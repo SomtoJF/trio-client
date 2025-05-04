@@ -22,6 +22,7 @@ export interface EvaluatorMessage {
 
 export interface ReflectionMessage {
 	id: string;
+	title: string;
 	content: string;
 	senderName: string;
 	isOptimal: boolean;
