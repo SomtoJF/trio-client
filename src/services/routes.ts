@@ -1,6 +1,4 @@
-const isProduction = process.env.NODE_ENV === "production";
-
-export const BaseRoute = isProduction ? "FILL_ME_IN" : "http://localhost:4000";
+export const BaseRoute = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 type RouteValues<T> = {
 	[K in keyof T]: string;
