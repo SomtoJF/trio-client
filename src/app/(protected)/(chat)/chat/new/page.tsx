@@ -44,7 +44,7 @@ const formSchema = z.object({
 		.min(2, {
 			message: "Chat name must be at least 2 characters.",
 		})
-		.max(20),
+		.max(100),
 	agents: z.array(agentSchema),
 });
 
@@ -54,7 +54,7 @@ const reflectionFormSchema = z.object({
 		.min(2, {
 			message: "Chat name must be at least 2 characters.",
 		})
-		.max(20),
+		.max(100),
 });
 
 const traits: Array<{ label: string; value: string }> = [

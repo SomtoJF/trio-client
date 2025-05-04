@@ -18,11 +18,17 @@ import {
 import Link from "next/link";
 import { ReactNode } from "react";
 
-export function NavDropdown({ children }: { children: ReactNode }) {
+export function NavDropdown({
+	children,
+	side,
+}: {
+	children: ReactNode;
+	side?: "top" | "right" | "bottom" | "left";
+}) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-56">
+			<DropdownMenuContent className="w-56" side={side}>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>

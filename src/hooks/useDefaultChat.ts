@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addMessageToChat } from "@/services";
+
 import { useToast } from "@/hooks";
 
 export function useDefaultChat(chatId: string) {
@@ -7,7 +7,7 @@ export function useDefaultChat(chatId: string) {
 	const toast = useToast();
 
 	const sendMessageMutation = useMutation({
-		mutationFn: (message: string) => addMessageToChat(chatId, message),
+		mutationFn: async (message: string) => message,
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["chat", chatId],

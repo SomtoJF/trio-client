@@ -17,12 +17,8 @@ import {
 } from "@/components/ui/sidebar";
 import {
 	BrainCog,
-	Calendar,
 	ChevronsUpDownIcon,
 	Home,
-	Inbox,
-	Search,
-	Settings,
 	SquarePlus,
 	Link as LinkIcon,
 	Cpu,
@@ -39,25 +35,24 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "../ui/collapsible";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function ProtectedSidebar() {
 	const { user } = useAuthStore((state) => state);
+	const pathname = usePathname();
 
-	const { data: reflectionChats, isFetching: isFetchingReflectionChats } =
-		useQuery({
-			queryKey: queryKeys.chat.getReflectionChats(),
-			queryFn: () => getReflectionChats(),
-			enabled: !!user,
-		});
+	const { data: reflectionChats } = useQuery({
+		queryKey: queryKeys.chat.getReflectionChats(),
+		queryFn: () => getReflectionChats(),
+		enabled: !!user,
+	});
 
-	const { data: basicChats, isFetching: isFetchingBasicChats } = useQuery({
+	const { data: basicChats } = useQuery({
 		queryKey: queryKeys.chat.getBasicChats(),
 		queryFn: () => getBasicChats(),
 		enabled: !!user,
 	});
-
-	console.log(basicChats);
-	console.log(reflectionChats);
 
 	const applicationItems = [
 		{
@@ -89,7 +84,6 @@ export default function ProtectedSidebar() {
 						<div className="row-span-2 col-start-3 col-end-4 self-center">
 							<LinkIcon className="w-4 h-4" />
 						</div>
-						{/* some random text to make the ui look good */}
 						<p className="text-xs font-light">&copy; 2025</p>
 					</div>
 				</Link>
@@ -113,7 +107,6 @@ export default function ProtectedSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 				<SidebarGroup>
-					{/* <SidebarGroupLabel>Chat</SidebarGroupLabel> */}
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{chatItems.map((item) => (
@@ -147,7 +140,11 @@ export default function ProtectedSidebar() {
 												<SidebarMenuButton asChild>
 													<a
 														href={`/chat/reflection/${item.id}`}
-														className="whitespace-nowrap overflow-ellipsis"
+														className={cn(
+															"whitespace-nowrap overflow-ellipsis",
+															pathname === `/chat/reflection/${item.id}` &&
+																"bg-neutral-800"
+														)}
 													>
 														<span>{item.chatName}</span>
 													</a>
@@ -175,7 +172,11 @@ export default function ProtectedSidebar() {
 												<SidebarMenuButton asChild>
 													<a
 														href={`/chat/basic/${item.id}`}
-														className="whitespace-nowrap overflow-ellipsis"
+														className={cn(
+															"whitespace-nowrap overflow-ellipsis",
+															pathname === `/chat/basic/${item.id}` &&
+																"bg-neutral-800"
+														)}
 													>
 														<span>{item.chatName}</span>
 													</a>

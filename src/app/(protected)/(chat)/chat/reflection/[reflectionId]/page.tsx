@@ -1,38 +1,30 @@
 "use client";
 
-import { SparklesCore } from "@/components/ui/sparkles";
 import { Textarea } from "@/components/ui/textarea";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuthStore } from "@/hooks";
-import { cn } from "@/lib/utils";
+import { useAuthStore, useToast } from "@/hooks";
 import { queryKeys } from "@/query-key-factory";
+import { motion, AnimatePresence } from "framer-motion";
 import {
 	getChatReflections,
 	getReflectionChat,
 	sendReflectionMessage,
 } from "@/services";
-import {
-	Reflection,
-	ReflectionMessage as ReflectionMessageType,
-	User,
-} from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { Reflection, User } from "@/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	Bot,
-	BrainCog,
-	ChevronsRight,
-	FlipHorizontal2,
+	ChevronRight,
+	Loader2Icon,
 	MoonStar,
 	SquarePi,
 	WholeWord,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
+import ReflectionMessage from "@/components/custom/ReflectionMessage";
+import ReflectionSequence from "@/components/custom/ReflectionSequence";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const EXAMPLE_MESSAGES = [
 	{
@@ -62,9 +54,14 @@ export default function Page() {
 	const [message, setMessage] = useState("");
 	const [isChatEmpty, setIsChatEmpty] = useState(true);
 	const [isSendingMessage, setIsSendingMessage] = useState(false);
+	const [newReflection, setNewReflection] = useState<Reflection | null>(null);
+	const [selectedReflection, setSelectedReflection] =
+		useState<Reflection | null>(null);
+	const [status, setStatus] = useState<string[]>([]);
+	const [openReflectionSequence, setOpenReflectionSequence] = useState(false);
 	const { user } = useAuthStore();
-
-	console.log(user);
+	const toast = useToast();
+	const queryClient = useQueryClient();
 
 	const { data: reflectionChat } = useQuery({
 		queryKey: queryKeys.chat.getOneReflectionChat(reflectionId as string),
@@ -83,78 +80,87 @@ export default function Page() {
 		}
 	}, [reflections, isReflectionsFetching]);
 
-	const onSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+	const onSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		sendReflectionMessage(reflectionId as string, { content: message });
+		setStatus([]);
+		setIsSendingMessage(true);
+		await sendReflectionMessage(
+			reflectionId as string,
+			{ content: message },
+			(status) => setStatus(status),
+			(reflection) => setNewReflection(reflection),
+			(error) => {
+				setIsSendingMessage(false);
+				setNewReflection(null);
+				toast.error("An error occured while sending your message");
+				console.error(error);
+			},
+			() => {
+				setIsSendingMessage(false);
+				setNewReflection(null);
+				queryClient.invalidateQueries({
+					queryKey: queryKeys.chat.getChatReflections(reflectionId as string),
+				});
+			}
+		);
 	};
 
-	const mockReflections: Reflection[] = [
-		{
-			id: "1",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			messages: [
-				{
-					id: "msg-1",
-					content:
-						"How can we model the cascading effects of Arctic permafrost thaw on global climate systems, considering feedback loops and methane release?",
-					isOptimal: false,
-					senderName: "currentUser",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				},
-				{
-					id: "msg-2",
-					content:
-						"The model should focus on direct temperature impacts and methane release rates. We can use existing climate models like CMIP6 and add permafrost-specific parameters.",
-					isOptimal: false,
-					senderName: "Reflector",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				},
-				{
-					id: "msg-3",
-					content:
-						"We should also consider economic impacts and policy scenarios in the model, including carbon pricing and mitigation strategies.",
-					isOptimal: false,
-					senderName: "Reflector",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				},
-				{
-					id: "msg-4",
-					content:
-						"A comprehensive model would need to integrate multiple components:\n1. Thermal dynamics of permafrost degradation\n2. Biogeochemical processes (methane & CO2 release)\n3. Ocean-atmosphere coupling\n4. Vegetation changes\n5. Albedo feedback effects\n\nWe should use a coupled Earth System Model (ESM) that combines:\n- Land surface processes (CLM5)\n- Atmospheric chemistry (WACCM)\n- Ocean circulation (POP2)\n- Sea ice dynamics (CICE)\n\nKey feedback loops to model:\n- Permafrost thaw → GHG release → warming → more thaw\n- Ice loss → albedo change → warming → more ice loss\n- Vegetation shifts → carbon cycle changes → atmospheric composition\n\nTime scales: Run simulations from decades to centuries, with spatial resolution of 0.5° grid cells.",
-					isOptimal: true,
-					senderName: "Reflector",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				},
-			],
-		},
-	];
-
 	return (
-		<div className="w-full h-full flex flex-col justify-between items-center gap-5 sm:px-[10%] px-4 relative">
-			<div className="absolute top-0 left-0 text-white">
-				{reflectionChat?.chatName}
-			</div>
-			<div className="h-[95%] w-full">
-				{/* TODO: Messages go here */}
-				{/* {isChatEmpty && <MessageExample setMessage={setMessage} user={user} />} */}
-				{mockReflections.map((reflection) => (
+		<div className="w-full h-full flex flex-col justify-between items-center gap-5 sm:px-[10%] lg:px-[20%] px-4 relative">
+			<nav className="bg-neutral-900 border-b border-neutral-800 flex items-center gap-5 absolute h-12 w-full px-2 z-50">
+				<SidebarTrigger className="hover:bg-neutral-700 hover:text-white" />{" "}
+				<div className="h-[60%] w-[1px] bg-neutral-800" />
+				<div className="flex items-center gap-2 px-2">
+					<p>{reflectionChat?.chatName}</p>
+				</div>
+			</nav>
+			<ReflectionSequence
+				userName={user?.userName ?? ""}
+				reflection={selectedReflection}
+				open={openReflectionSequence}
+				setOpen={setOpenReflectionSequence}
+			/>
+
+			<div className="h-[95%] w-full overflow-y-auto pb-40 flex flex-col gap-14 overflow-x-hidden">
+				{isChatEmpty && <MessageExample setMessage={setMessage} user={user} />}
+				{reflections?.map((reflection) => (
 					<ReflectionMessage
 						key={reflection.id}
 						reflection={reflection}
-						userName="currentUser"
+						userName={user?.userName ?? ""}
+						setSelectedReflection={setSelectedReflection}
+						setOpenReflectionSequence={setOpenReflectionSequence}
 					/>
 				))}
+				{newReflection && (
+					<ReflectionMessage
+						key={newReflection.id}
+						reflection={newReflection}
+						userName={user?.userName ?? ""}
+						setSelectedReflection={setSelectedReflection}
+						setOpenReflectionSequence={setOpenReflectionSequence}
+					/>
+				)}
 			</div>
 			<div className="absolute bottom-0 w-full z-10 flex flex-col sm:px-[10%] px-4 gap-4 bg-black shadow-[0_-15px_20px_0px_rgba(0,0,0,0.9)]">
+				<AnimatePresence mode="wait">
+					{isSendingMessage && status.length > 0 && (
+						<motion.span
+							key={status[status.length - 1]}
+							className="text-sm font-semibold text-neutral-400"
+							initial={{ y: 10, opacity: 0 }}
+							animate={{ y: 0, opacity: 1 }}
+							exit={{ y: -10, opacity: 0 }}
+							transition={{ duration: 0.3 }}
+						>
+							{status[status.length - 1]}
+						</motion.span>
+					)}
+				</AnimatePresence>
 				<form onSubmit={onSendMessage}>
 					<label
 						htmlFor="message-input"
-						className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-3xl px-4"
+						className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-xl px-4"
 					>
 						<Textarea
 							placeholder="Ask me anything..."
@@ -172,19 +178,23 @@ export default function Page() {
 						/>
 						<button
 							type="submit"
-							className="p-3 bg-fuchsia-700 hover:bg-fuchsia-800 transition-colors rounded-full aspect-square flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+							className="px-4 py-0 h-10 bg-fuchsia-700 hover:bg-fuchsia-800 transition-colors rounded-lg aspect-square flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-xs"
 							disabled={
 								isSendingMessage || isReflectionsFetching || message === ""
 							}
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								fill="currentColor"
-								className="w-6 h-6"
-							>
-								<path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-							</svg>
+							{isSendingMessage ? (
+								<Loader2Icon className="w-5 h-5 animate-spin" />
+							) : (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									className="w-5 h-5"
+								>
+									<path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+								</svg>
+							)}
 						</button>
 					</label>
 				</form>
@@ -224,97 +234,6 @@ function MessageExample({
 						<p>{message.text}</p>
 					</div>
 				))}
-			</div>
-		</div>
-	);
-}
-
-function ReflectionMessage({
-	reflection,
-	userName,
-}: {
-	reflection: Reflection;
-	userName: string;
-}) {
-	const [featuredMessage, setFeaturedMessage] =
-		useState<ReflectionMessageType | null>(null);
-
-	const userMessage = reflection.messages.find(
-		(message) => message.senderName === userName
-	);
-
-	const reflectorMessages = reflection.messages.filter(
-		(message) => message.senderName !== userName
-	);
-
-	const optimalMessage = reflection.messages.find(
-		(message) => message.isOptimal === true
-	);
-
-	useEffect(() => {
-		if (optimalMessage) {
-			setFeaturedMessage(optimalMessage);
-		}
-	}, [optimalMessage]);
-
-	return (
-		<div className="w-full h-full flex flex-col text-sm items-center gap-10">
-			{userMessage && (
-				<div className="self-end px-3 py-2 bg-purple-100 text-black rounded-xl max-w-[70%]">
-					{userMessage.content}
-				</div>
-			)}
-			{featuredMessage && (
-				<div className="self-start grid grid-cols-[25px,1fr] grid-rows-1 gap-3">
-					<BrainCog className="text-purple-800 border border-gray-700 bg-purple-100 rounded-full p-1" />
-					<p>{featuredMessage.content}</p>
-				</div>
-			)}
-			<div className="flex gap-2 justify-start w-full px-[25px] overflow-x-auto overflow-y-hidden">
-				{reflectorMessages.map((message) => (
-					<div
-						className={cn(
-							"px-3 py-2 bg-neutral-900 rounded-xl flex flex-col gap-2 cursor-pointer hover:bg-neutral-800 transition-colors relative",
-							message.isOptimal && "border border-gray-800",
-							message.id === featuredMessage?.id && "bg-neutral-800"
-						)}
-						onClick={() => setFeaturedMessage(message)}
-						key={message.id}
-					>
-						{message.isOptimal && (
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild className="absolute inset-0">
-										<div className="w-full absolute inset-0 h-screen">
-											<SparklesCore
-												id="tsparticlesfullpage"
-												background="transparent"
-												minSize={0.6}
-												maxSize={1.4}
-												particleDensity={100}
-												className="w-full h-full"
-												particleColor="#FFFFFF"
-											/>
-										</div>
-									</TooltipTrigger>
-									<TooltipContent className="text-xs" side="bottom">
-										This is the optimal answer
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						)}
-						<p className="self-start text-xs text-white line-clamp-4 overflow-hidden text-ellipsis w-[200px] ">
-							{message.content}
-						</p>
-						<p className="text-xs text-neutral-400 flex items-center gap-1">
-							<FlipHorizontal2 className="w-4 h-4 mr-1" />
-							{message.senderName}
-						</p>
-					</div>
-				))}
-				<p className="text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer h-fit self-end px-3 py-2 text-nowrap flex">
-					View generation sequence <ChevronsRight className="w-4 h-4 ml-1" />
-				</p>
 			</div>
 		</div>
 	);

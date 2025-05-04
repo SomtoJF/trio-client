@@ -65,7 +65,7 @@ export default function Page() {
 			}, 1000);
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toast.error("Incorrect username or password");
 			throw error;
 		},
 	});

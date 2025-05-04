@@ -11,6 +11,13 @@ export interface Reflection {
 	createdAt: string;
 	updatedAt: string;
 	messages: ReflectionMessage[];
+	evaluatorMessages: EvaluatorMessage[];
+}
+
+export interface EvaluatorMessage {
+	id: string;
+	content: string;
+	isOptimal: string;
 }
 
 export interface ReflectionMessage {
