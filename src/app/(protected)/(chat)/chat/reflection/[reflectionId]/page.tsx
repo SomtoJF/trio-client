@@ -11,14 +11,7 @@ import {
 } from "@/services";
 import { Reflection, User } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	Bot,
-	ChevronRight,
-	Loader2Icon,
-	MoonStar,
-	SquarePi,
-	WholeWord,
-} from "lucide-react";
+import { Bot, Loader2Icon, MoonStar, SquarePi, WholeWord } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 

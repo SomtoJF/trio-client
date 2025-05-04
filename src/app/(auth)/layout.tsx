@@ -35,12 +35,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 				<BackgroundBeams className="!absolute hidden sm:block" />
 				<Navbar className="px-10" />
 				<div className="w-full h-[90vh] flex justify-center lg:justify-between items-center px-4 md:px-10 py-5 gap-20">
-					<div className="hidden h-full w-1/2 rounded-3xl bg-transparent relative lg:flex flex-col items-start py-20">
+					<div className="hidden h-full w-1/2  bg-transparent relative lg:flex flex-col items-start py-20">
 						<div className="max-w-2xl mx-auto p-4 relative z-10 space-y-8 ">
 							<h1 className="relative z-10 text-lg md:text-7xl font-sans font-bold">
-								Join the waitlist
+								Join the conversation
 							</h1>
-							<p className="max-w-lg mx-auto my-2 text-sm relative z-10">
+							<p className="max-w-lg my-2 text-sm relative z-10">
 								Welcome to MailJet, the best transactional email service on the
 								web. We provide reliable, scalable, and customizable email
 								solutions for your business. Whether you&apos;re sending order

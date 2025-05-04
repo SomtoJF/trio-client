@@ -51,3 +51,11 @@ export interface BasicAgent {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface BasicChatMessage {
+	id: string;
+	content: string;
+	senderName: string;
+	createdAt: string;
+	updatedAt: string;
+}

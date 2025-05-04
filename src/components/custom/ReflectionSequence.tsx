@@ -19,12 +19,9 @@ import {
 	TextQuote,
 	MessageCircle,
 	Award,
-	ExternalLink,
 	Maximize2,
-	Minimize2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -92,28 +89,6 @@ export default function ReflectionSequence({
 
 						{/* Timeline indicator on the left */}
 						<div className="flex grow overflow-hidden">
-							{/* <div className="w-12 flex-shrink-0 bg-neutral-800 flex flex-col items-center pt-8">
-								{reflectorMessages?.map((_, index) => (
-									<React.Fragment key={`timeline-${index}`}>
-										<div
-											className={cn(
-												"w-4 h-4 rounded-full flex items-center justify-center z-10",
-												optimalIndex === index
-													? "bg-green-500 border-2 border-green-300"
-													: "bg-purple-700"
-											)}
-										>
-											{optimalIndex === index && (
-												<Award className="w-2 h-2 text-white" />
-											)}
-										</div>
-										{index < reflectorMessages.length - 1 && (
-											<div className="w-0.5 h-16 bg-neutral-700" />
-										)}
-									</React.Fragment>
-								))}
-							</div> */}
-
 							{/* Message content */}
 							<div className="flex-grow overflow-y-auto py-6 px-4">
 								<Accordion
