@@ -7,11 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/query-key-factory";
 import { getCurrentUser } from "@/services";
 import { useRouter } from "next/navigation";
-import { useAuthStore, useToast } from "@/hooks";
+import { useAuthStore } from "@/hooks";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	const { push } = useRouter();
-	const toast = useToast();
 	const setUser = useAuthStore((state) => state.setUser);
 	const currentUserQuery = useQuery({
 		queryKey: queryKeys.user.currentUser(),

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { IoIosMenu } from "react-icons/io";
 import { BsChatHeart } from "react-icons/bs";
-import { SiRoamresearch } from "react-icons/si";
 import { CiSquareQuestion } from "react-icons/ci";
 import { IoMdHome } from "react-icons/io";
 import { MdLogin } from "react-icons/md";

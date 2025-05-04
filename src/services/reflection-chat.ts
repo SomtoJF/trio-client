@@ -1,4 +1,4 @@
-import { Reflection, ReflectionChat, ReflectionMessage } from "@/types";
+import { Reflection, ReflectionChat } from "@/types";
 import { BaseRoute, Route } from "./routes";
 
 interface CreateReflectionChatData {

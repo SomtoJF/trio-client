@@ -1,4 +1,4 @@
-import { Reflection } from "@/types/types";
+import { Reflection, ReflectionMessage, EvaluatorMessage } from "@/types/types";
 import React, { useState } from "react";
 import {
 	Sheet,
@@ -50,16 +50,14 @@ export default function ReflectionSequence({
 		(message) => message.senderName !== userName
 	);
 
-	// Find the index of the optimal message
-	const optimalIndex = reflectorMessages?.findIndex(
-		(message) => message.isOptimal
-	);
-
 	const handleValueChange = (value: string[]) => {
 		setExpandedValues(value);
 	};
 
-	const handleViewFullMessage = (message: any, evaluatorMessage: any) => {
+	const handleViewFullMessage = (
+		message: ReflectionMessage,
+		evaluatorMessage: EvaluatorMessage
+	) => {
 		setSelectedMessage({
 			content: message.content,
 			evaluatorNotes: evaluatorMessage?.content || "",
@@ -173,7 +171,7 @@ export default function ReflectionSequence({
 																<div className="w-full">
 																	<div className="flex justify-between items-center mb-1">
 																		<div className="font-medium text-sm text-blue-300">
-																			Evaluator's Notes
+																			Evaluator&apos;s Notes
 																		</div>
 																	</div>
 																	<p className="text-sm text-neutral-300 line-clamp-2">
@@ -233,7 +231,7 @@ export default function ReflectionSequence({
 						{selectedMessage?.evaluatorNotes && (
 							<div className="space-y-2">
 								<h3 className="text-sm font-medium text-blue-300">
-									Evaluator's Notes
+									Evaluator&apos;s Notes
 								</h3>
 								<div className="bg-neutral-800 rounded-lg p-4 text-sm text-neutral-300">
 									{selectedMessage.evaluatorNotes}

@@ -9,21 +9,8 @@ import {
 	getBasicChatMessages,
 	sendBasicMessage,
 } from "@/services";
-import { User } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	Bot,
-	Loader2Icon,
-	MoonStar,
-	SquarePi,
-	WholeWord,
-	Send,
-	Info,
-	X,
-	MessageSquare,
-	Clock,
-	ArrowUpRight,
-} from "lucide-react";
+import { Bot, Loader2Icon, Send, MessageSquare, Clock } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import moment from "moment";
@@ -56,44 +43,44 @@ interface BasicChatMessage {
 	createdAt: string;
 }
 
-interface AgentStatus {
-	agentName: string;
-	status: string;
-}
+// interface AgentStatus {
+// 	agentName: string;
+// 	status: string;
+// }
 
-interface AgentResponse {
-	agentName: string;
-	content: string;
-}
+// interface AgentResponse {
+// 	agentName: string;
+// 	content: string;
+// }
 
-interface ChatResponse {
-	status: AgentStatus[];
-	agentResponses: AgentResponse[];
-	error?: string;
-}
+// interface ChatResponse {
+// 	status: AgentStatus[];
+// 	agentResponses: AgentResponse[];
+// 	error?: string;
+// }
 
-const EXAMPLE_MESSAGES = [
-	{
-		text: "Explain quantum entanglement using only emojis",
-		icon: <MoonStar className="w-6 h-6" />,
-		color: "blue",
-	},
-	{
-		text: "Write a haiku about machine learning",
-		icon: <Bot className="w-6 h-6" />,
-		color: "green",
-	},
-	{
-		text: "Explain why 0.1 + 0.2 ≠ 0.3 in JavaScript",
-		icon: <SquarePi className="w-6 h-6" />,
-		color: "red",
-	},
-	{
-		text: "Describe consciousness without using the letter 'e'",
-		icon: <WholeWord className="w-6 h-6" />,
-		color: "purple",
-	},
-];
+// const EXAMPLE_MESSAGES = [
+// 	{
+// 		text: "Explain quantum entanglement using only emojis",
+// 		icon: <MoonStar className="w-6 h-6" />,
+// 		color: "blue",
+// 	},
+// 	{
+// 		text: "Write a haiku about machine learning",
+// 		icon: <Bot className="w-6 h-6" />,
+// 		color: "green",
+// 	},
+// 	{
+// 		text: "Explain why 0.1 + 0.2 ≠ 0.3 in JavaScript",
+// 		icon: <SquarePi className="w-6 h-6" />,
+// 		color: "red",
+// 	},
+// 	{
+// 		text: "Describe consciousness without using the letter 'e'",
+// 		icon: <WholeWord className="w-6 h-6" />,
+// 		color: "purple",
+// 	},
+// ];
 
 export default function Page() {
 	const { id } = useParams();
@@ -101,11 +88,10 @@ export default function Page() {
 		queryKey: queryKeys.chat.getOneBasicChat(id as string),
 		queryFn: () => getBasicChat(id as string),
 	});
-	const { data: basicChatMessages, isFetching: isBasicChatMessagesFetching } =
-		useQuery({
-			queryKey: queryKeys.chat.getBasicChatMessages(id as string),
-			queryFn: () => getBasicChatMessages(id as string),
-		});
+	const { data: basicChatMessages } = useQuery({
+		queryKey: queryKeys.chat.getBasicChatMessages(id as string),
+		queryFn: () => getBasicChatMessages(id as string),
+	});
 	const { user } = useAuthStore();
 	const [message, setMessage] = useState("");
 	const [selectedAgent, setSelectedAgent] = useState<
@@ -401,35 +387,35 @@ export default function Page() {
 	);
 }
 
-function MessageExample({
-	setMessage,
-	user,
-}: {
-	setMessage: (message: string) => void;
-	user: User | null;
-}) {
-	return (
-		<div className="w-full h-full flex flex-col justify-center items-center gap-10">
-			<div className="flex flex-col items-center gap-2 text-center -mt-[30%]">
-				<h2 className="text-2xl text-gray-400 font-semibold">
-					Hi {user?.userName}
-				</h2>
-				<h1 className="text-4xl font-extrabold bg-gradient-to-r from-rose-500 via-fuchsia-500 to-indigo-500 inline-block text-transparent bg-clip-text">
-					What would you like to know?
-				</h1>
-			</div>
-			<div className="flex gap-4">
-				{EXAMPLE_MESSAGES.map((message, index) => (
-					<div
-						key={index}
-						className={`w-40 h-36 rounded-3xl flex flex-col items-start justify-between text-xs gap-2 px-2 py-8  bg-neutral-900 border border-neutral-800 transition-all duration-300 hover:scale-105 cursor-pointer`}
-						onClick={() => setMessage(message.text)}
-					>
-						<p className="text-xs text-neutral-400">{message.icon}</p>
-						<p>{message.text}</p>
-					</div>
-				))}
-			</div>
-		</div>
-	);
-}
+// function MessageExample({
+// 	setMessage,
+// 	user,
+// }: {
+// 	setMessage: (message: string) => void;
+// 	user: User | null;
+// }) {
+// 	return (
+// 		<div className="w-full h-full flex flex-col justify-center items-center gap-10">
+// 			<div className="flex flex-col items-center gap-2 text-center -mt-[30%]">
+// 				<h2 className="text-2xl text-gray-400 font-semibold">
+// 					Hi {user?.userName}
+// 				</h2>
+// 				<h1 className="text-4xl font-extrabold bg-gradient-to-r from-rose-500 via-fuchsia-500 to-indigo-500 inline-block text-transparent bg-clip-text">
+// 					What would you like to know?
+// 				</h1>
+// 			</div>
+// 			<div className="flex gap-4">
+// 				{EXAMPLE_MESSAGES.map((message, index) => (
+// 					<div
+// 						key={index}
+// 						className={`w-40 h-36 rounded-3xl flex flex-col items-start justify-between text-xs gap-2 px-2 py-8  bg-neutral-900 border border-neutral-800 transition-all duration-300 hover:scale-105 cursor-pointer`}
+// 						onClick={() => setMessage(message.text)}
+// 					>
+// 						<p className="text-xs text-neutral-400">{message.icon}</p>
+// 						<p>{message.text}</p>
+// 					</div>
+// 				))}
+// 			</div>
+// 		</div>
+// 	);
+// }
