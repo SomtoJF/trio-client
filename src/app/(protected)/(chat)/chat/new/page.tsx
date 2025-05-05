@@ -34,7 +34,12 @@ import {
 } from "@/components/ui/tooltip";
 
 const agentSchema = z.object({
-	agentName: z.string().min(2).max(20),
+	agentName: z
+		.string()
+		.min(2, { message: "Agent name must be at least 2 characters." })
+		.max(50, {
+			message: "Agent name must be less than 50 characters.",
+		}),
 	agentTraits: z.array(z.string().min(2).max(20)),
 });
 
@@ -44,7 +49,9 @@ const formSchema = z.object({
 		.min(2, {
 			message: "Chat name must be at least 2 characters.",
 		})
-		.max(100),
+		.max(100, {
+			message: "Chat name must be less than 100 characters.",
+		}),
 	agents: z.array(agentSchema),
 });
 
@@ -54,7 +61,9 @@ const reflectionFormSchema = z.object({
 		.min(2, {
 			message: "Chat name must be at least 2 characters.",
 		})
-		.max(100),
+		.max(100, {
+			message: "Chat name must be less than 100 characters.",
+		}),
 });
 
 const traits: Array<{ label: string; value: string }> = [
