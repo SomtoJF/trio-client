@@ -179,7 +179,7 @@ export default function Page() {
 	if (!basicChat) return null;
 
 	return (
-		<div className="flex h-full">
+		<div className="flex h-full w-full">
 			{/* Main chat area */}
 			<div className="flex-1 flex flex-col border-r border-neutral-800">
 				{/* Header */}
@@ -295,7 +295,7 @@ export default function Page() {
 			</div>
 
 			{/* Agent info sidebar */}
-			<div className="w-80 flex flex-col border-l border-neutral-800">
+			<div className="w-0 lg:w-80 flex flex-col border-l border-neutral-800">
 				<div className="p-4 border-b border-neutral-800">
 					<h2 className="text-lg font-medium flex items-center gap-2">
 						<Bot className="w-5 h-5 text-purple-500" />
