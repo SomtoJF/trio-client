@@ -40,11 +40,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 								Join the conversation
 							</h1>
 							<p className="max-w-lg my-2 text-sm relative z-10">
-								Welcome to MailJet, the best transactional email service on the
-								web. We provide reliable, scalable, and customizable email
-								solutions for your business. Whether you&apos;re sending order
-								confirmations, password reset emails, or promotional campaigns,
-								MailJet has got you covered.
+								Welcome to Trio, your collaborative AI chat platform. With Trio,
+								you can either chat with multiple AI agents for diverse
+								perspectives or engage in an iterative conversation where a
+								single agent refines its responses step by step until you reach
+								the optimal answer—all designed to help you get the best results
+								from your AI interactions.
 							</p>
 						</div>
 					</div>
