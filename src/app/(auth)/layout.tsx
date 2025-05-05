@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import { LoadingScreen, Navbar } from "@/components/custom/";
+import { Navbar } from "@/components/custom/";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/query-key-factory";
 import { getCurrentUser } from "@/services";
@@ -22,9 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 		if (!currentUserQuery.isFetching) setUser(currentUserQuery.data ?? null);
 	}, [currentUserQuery.isFetching, currentUserQuery.data]);
 
-	if (currentUserQuery.isPending || currentUserQuery.isFetching) {
-		return <LoadingScreen />;
-	} else if (currentUserQuery.isSuccess) {
+	if (currentUserQuery.isSuccess) {
 		setTimeout(() => {
 			push("/");
 		}, 1000);
