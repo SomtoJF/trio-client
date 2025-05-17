@@ -35,7 +35,7 @@ export default function Index() {
 					className="bg-gray-900 text-gray-200 flex items-center py-1 px-4 space-x-2 text-xs font-semibold group"
 					aria-label="Production status"
 				>
-					<p>still in production, but coming soon</p>
+					<p>Welcome to Trio</p>
 					<FaAngleRight className="group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
 				</HoverBorderGradient>
 				<h1 className="text-4xl sm:text-5xl text-white relative z-20 lg:px-20 font-semibold">
