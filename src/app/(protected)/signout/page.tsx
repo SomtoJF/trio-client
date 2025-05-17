@@ -18,7 +18,7 @@ export default function Page() {
 		mutationFn: signout,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: queryKeys.user.currentUser(),
+				queryKey: queryKeys.user.all,
 			});
 			setUser(null);
 			toast.success("signout successful");
