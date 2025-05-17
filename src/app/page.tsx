@@ -25,14 +25,15 @@ export default function Index() {
 	}, [currentUserQuery.isFetching, currentUserQuery.data]);
 
 	return (
-		<div className="w-full min-h-screen bg-black text-gray-200 relative overflow-hidden px-4 lg:px-10">
+		<main className="w-full min-h-screen bg-black text-gray-200 relative overflow-hidden px-4 lg:px-10">
 			<Navbar />
-			<section className="w-full text-white text-center px-4 lg:px-32 flex flex-col gap-10 relative z-20 h-[90vh] bg-black bg-grid-small-white/[0.2] items-center pt-[8%]">
+			<article className="w-full text-white text-center px-4 lg:px-32 flex flex-col gap-10 relative z-20 h-[90vh] bg-black bg-grid-small-white/[0.2] items-center pt-[8%]">
 				<div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,white)]"></div>
 				<HoverBorderGradient
 					containerClassName="rounded-full"
 					as="button"
 					className="bg-gray-900 text-gray-200 flex items-center py-1 px-4 space-x-2 text-xs font-semibold group"
+					aria-label="Production status"
 				>
 					<p>still in production, but coming soon</p>
 					<FaAngleRight className="group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
@@ -56,12 +57,13 @@ export default function Index() {
 						<Link
 							href={user ? "/chat/new" : "/login"}
 							className="w-full h-full flex justify-center items-center px-8 py-4"
+							aria-label="Get started with Trio"
 						>
 							Get Started
 						</Link>
 					</Button>
 				</div>
-			</section>
-		</div>
+			</article>
+		</main>
 	);
 }
