@@ -41,15 +41,7 @@ export function NavDropdown({
 						<span>Settings</span>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem>
-						<Link href={"/chat/new"} className="space-x-2 flex items-center">
-							<Plus className="h-4 w-4" />
-							<span>New Chat</span>
-						</Link>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
+
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>
 					<Link
