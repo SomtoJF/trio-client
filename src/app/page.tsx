@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/custom/Navbar";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { FlipWords } from "@/components/ui/flip-words";
+import { ChatDemo } from "@/components/custom/ChatDemo";
 import { FaAngleRight } from "react-icons/fa6";
 import { getCurrentUser } from "@/services";
 import { useQuery } from "@tanstack/react-query";
@@ -25,9 +26,11 @@ export default function Index() {
 	}, [currentUserQuery.isFetching, currentUserQuery.data]);
 
 	return (
-		<main className="w-full min-h-screen bg-black text-gray-200 relative overflow-hidden px-4 lg:px-10">
+		<main className="w-full min-h-screen bg-black text-gray-200 relative overflow-hidden">
 			<Navbar />
-			<article className="w-full text-white text-center px-4 lg:px-32 flex flex-col gap-10 relative z-20 h-[90vh] bg-black bg-grid-small-white/[0.2] items-center pt-[8%]">
+
+			{/* Hero Section */}
+			<article className="w-full text-white text-center px-4 lg:px-32 flex flex-col gap-10 relative z-20 min-h-[90vh] bg-black bg-grid-small-white/[0.2] items-center pt-[8%] pb-20">
 				<div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,white)]"></div>
 				<HoverBorderGradient
 					containerClassName="rounded-full"
@@ -63,7 +66,65 @@ export default function Index() {
 						</Link>
 					</Button>
 				</div>
+
+				{/* Chat Demo Section */}
+				<div className="w-full max-w-6xl mx-auto mt-16 relative z-20">
+					<div className="text-center mb-8">
+						<h2 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
+							Experience Trio in Action
+						</h2>
+						<p className="text-neutral-400 max-w-2xl mx-auto">
+							Try our interactive demo below. Ask any question and watch as both
+							GPT and Claude respond with their unique perspectives.
+						</p>
+					</div>
+					<ChatDemo />
+				</div>
 			</article>
+
+			{/* Additional Content Section */}
+			<section className="w-full bg-neutral-950 relative">
+				<div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-950 to-black"></div>
+				<div className="relative z-10 px-4 lg:px-32 py-20">
+					<div className="max-w-4xl mx-auto text-center">
+						<h2 className="text-3xl sm:text-4xl font-semibold text-white mb-6">
+							Why Choose Trio?
+						</h2>
+						<div className="grid md:grid-cols-3 gap-8 mt-12">
+							<div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800">
+								<div className="text-3xl mb-4">🤖</div>
+								<h3 className="text-xl font-semibold text-white mb-3">
+									Multiple AI Agents
+								</h3>
+								<p className="text-neutral-400">
+									Chat with multiple AI models simultaneously and compare their
+									unique responses and perspectives.
+								</p>
+							</div>
+							<div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800">
+								<div className="text-3xl mb-4">⚡</div>
+								<h3 className="text-xl font-semibold text-white mb-3">
+									Real-time Conversations
+								</h3>
+								<p className="text-neutral-400">
+									Experience seamless, real-time conversations with AI agents
+									that respond naturally and contextually.
+								</p>
+							</div>
+							<div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800">
+								<div className="text-3xl mb-4">🎯</div>
+								<h3 className="text-xl font-semibold text-white mb-3">
+									Custom Personalities
+								</h3>
+								<p className="text-neutral-400">
+									Configure agents with custom traits and personalities to get
+									specialized responses for your needs.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 		</main>
 	);
 }
