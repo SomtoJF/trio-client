@@ -49,7 +49,6 @@ export function ChatDemo() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [inputValue, setInputValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [activeAgent, setActiveAgent] = useState<"gpt" | "claude">("gpt");
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	const scrollToBottom = () => {
@@ -107,8 +106,6 @@ export function ChatDemo() {
 			]);
 
 			setIsLoading(false);
-			// Alternate which agent responds first next time
-			setActiveAgent((prev) => (prev === "gpt" ? "claude" : "gpt"));
 		}, 1000);
 	};
 

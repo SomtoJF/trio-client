@@ -11,7 +11,6 @@ import {
 	Github,
 	LogOut,
 	MessageCircleHeart,
-	Plus,
 	Settings,
 	User,
 } from "lucide-react";
