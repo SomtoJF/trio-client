@@ -34,7 +34,7 @@ export function Navbar({ className }: { className?: string }) {
 	return (
 		<nav
 			className={cn(
-				"w-full h-16 flex justify-between items-center text-sm relative z-20",
+				"w-full h-16 flex justify-between items-center text-sm relative z-20 px-10",
 				className
 			)}
 		>
