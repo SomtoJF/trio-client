@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, ReactNode } from "react";
 import {
 	Sidebar,
 	SidebarContent,
@@ -12,23 +12,19 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarMenuSubItem,
-	SidebarMenuSub,
 	SidebarInput,
 	SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
 	BrainCog,
 	ChevronsUpDownIcon,
-	Home,
 	SquarePlus,
-	MessageSquareQuote,
 	Search,
-	Bell,
-	Settings,
-	ChevronDown,
 	Github,
 	MessageCircleHeart,
+	Sparkles,
+	MessageSquare,
+	type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { NavDropdown } from "@/components/custom";
@@ -36,11 +32,6 @@ import { useAuthStore } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/query-key-factory";
 import { getBasicChats, getReflectionChats } from "@/services";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "../ui/collapsible";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { BasicChat, ReflectionChat } from "@/types";
@@ -63,20 +54,39 @@ export default function ProtectedSidebar() {
 		enabled: !!user,
 	});
 
-	// Filter chats based on search query
-	const filteredReflectionChats = useMemo(() => {
-		if (!reflectionChats || !searchQuery) return reflectionChats;
-		return reflectionChats.filter((chat: ReflectionChat) =>
-			chat.chatName.toLowerCase().includes(searchQuery.toLowerCase())
-		);
-	}, [reflectionChats, searchQuery]);
+	// Combine and sort all chats by updated date
+	const allChats = useMemo(() => {
+		const combined: Array<
+			| (ReflectionChat & { type: "reflection" })
+			| (BasicChat & { type: "basic" })
+		> = [];
 
-	const filteredBasicChats = useMemo(() => {
-		if (!basicChats || !searchQuery) return basicChats;
-		return basicChats.filter((chat: BasicChat) =>
+		if (reflectionChats) {
+			combined.push(
+				...reflectionChats.map((chat) => ({ ...chat, type: "reflection" as const }))
+			);
+		}
+
+		if (basicChats) {
+			combined.push(
+				...basicChats.map((chat) => ({ ...chat, type: "basic" as const }))
+			);
+		}
+
+		// Sort by updatedAt descending (most recent first)
+		return combined.sort(
+			(a, b) =>
+				new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+		);
+	}, [reflectionChats, basicChats]);
+
+	// Filter chats based on search query
+	const filteredChats = useMemo(() => {
+		if (!searchQuery) return allChats;
+		return allChats.filter((chat) =>
 			chat.chatName.toLowerCase().includes(searchQuery.toLowerCase())
 		);
-	}, [basicChats, searchQuery]);
+	}, [allChats, searchQuery]);
 
 	// Keyboard shortcut for search (Cmd/Ctrl + F)
 	useEffect(() => {
@@ -91,29 +101,7 @@ export default function ProtectedSidebar() {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
-	const navigationItems = [
-		{
-			title: "Home",
-			url: "/",
-			icon: Home,
-		},
-		{
-			title: "Notifications",
-			url: "/notifications",
-			icon: Bell,
-		},
-		{
-			title: "Chats",
-			url: "/chat",
-			icon: MessageSquareQuote,
-			isActive: pathname.includes("/chat"),
-		},
-		{
-			title: "Settings",
-			url: "/settings",
-			icon: Settings,
-		},
-	];
+	const navigationItems: {title: string, url: string, icon: LucideIcon, isActive: boolean}[] = [];
 
 	const otherItems = [
 		{
@@ -140,9 +128,6 @@ export default function ProtectedSidebar() {
 						</div>
 						<div className="flex-1">
 							<p className="font-semibold text-base">Trio</p>
-						</div>
-						<div className="w-5 h-5 rounded bg-neutral-700 flex items-center justify-center text-xs font-semibold">
-							⌘T
 						</div>
 					</div>
 				</Link>
@@ -176,7 +161,7 @@ export default function ProtectedSidebar() {
 			</SidebarHeader>
 			<SidebarContent className="bg-neutral-900 text-white">
 				{/* Main Navigation */}
-				<SidebarGroup>
+		{navigationItems.length > 0 &&	<SidebarGroup>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{navigationItems.map((item) => (
@@ -198,99 +183,52 @@ export default function ProtectedSidebar() {
 							))}
 						</SidebarMenu>
 					</SidebarGroupContent>
-				</SidebarGroup>
+				</SidebarGroup>}
 
-				{/* Chat Sections */}
-				{filteredReflectionChats?.length || filteredBasicChats?.length ? (
+				{/* All Chats */}
+				{filteredChats?.length ? (
 					<>
 						<SidebarSeparator className="my-2" />
-
-						{/* Reflection Chats */}
-						{filteredReflectionChats?.length ? (
-							<SidebarGroup>
+						<SidebarGroup>
+							<SidebarGroupContent>
 								<SidebarMenu>
-									<Collapsible defaultOpen className="group/collapsible">
-										<SidebarMenuItem>
-											<CollapsibleTrigger asChild>
-												<SidebarMenuButton className="hover:bg-neutral-800 transition-colors group">
-													<div className="w-2 h-2 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 mr-1" />
-													<span className="text-sm font-medium">
-														Reflection Chats
-													</span>
-													<ChevronDown className="w-4 h-4 ml-auto transition-transform group-data-[state=open]:rotate-180" />
-												</SidebarMenuButton>
-											</CollapsibleTrigger>
-											<CollapsibleContent>
-												<SidebarMenuSub>
-													{filteredReflectionChats?.map((item) => (
-														<SidebarMenuSubItem key={item.id}>
-															<SidebarMenuButton asChild>
-																<Link
-																	href={`/chat/reflection/${item.id}`}
-																	className={cn(
-																		"text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors rounded-md",
-																		pathname ===
-																			`/chat/reflection/${item.id}` &&
-																			"bg-neutral-800 text-white"
-																	)}
-																>
-																	<span className="truncate">
-																		{item.chatName}
-																	</span>
-																</Link>
-															</SidebarMenuButton>
-														</SidebarMenuSubItem>
-													))}
-												</SidebarMenuSub>
-											</CollapsibleContent>
-										</SidebarMenuItem>
-									</Collapsible>
-								</SidebarMenu>
-							</SidebarGroup>
-						) : null}
+									{filteredChats.map((chat) => {
+										const isReflection = chat.type === "reflection";
+										const href = isReflection
+											? `/chat/reflection/${chat.id}`
+											: `/chat/basic/${chat.id}`;
+										const isActive = pathname === href;
+										const Icon = isReflection ? Sparkles : MessageSquare;
 
-						{/* Basic Chats */}
-						{filteredBasicChats?.length ? (
-							<SidebarGroup>
-								<SidebarMenu>
-									<Collapsible defaultOpen className="group/collapsible">
-										<SidebarMenuItem>
-											<CollapsibleTrigger asChild>
-												<SidebarMenuButton className="hover:bg-neutral-800 transition-colors group">
-													<div className="w-2 h-2 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mr-1" />
-													<span className="text-sm font-medium">
-														Basic Chats
-													</span>
-													<ChevronDown className="w-4 h-4 ml-auto transition-transform group-data-[state=open]:rotate-180" />
+										return (
+											<SidebarMenuItem key={`${chat.type}-${chat.id}`}>
+												<SidebarMenuButton
+													asChild
+													className={cn(
+														"hover:bg-neutral-800 transition-colors",
+														isActive && "bg-neutral-800 text-white"
+													)}
+												>
+													<Link href={href} className="flex items-center gap-2">
+														<Icon
+															className={cn(
+																"w-4 h-4 flex-shrink-0",
+																isReflection
+																	? "text-purple-400"
+																	: "text-green-400"
+															)}
+														/>
+														<span className="truncate text-sm">
+															{chat.chatName}
+														</span>
+													</Link>
 												</SidebarMenuButton>
-											</CollapsibleTrigger>
-											<CollapsibleContent>
-												<SidebarMenuSub>
-													{filteredBasicChats?.map((item) => (
-														<SidebarMenuSubItem key={item.id}>
-															<SidebarMenuButton asChild>
-																<Link
-																	href={`/chat/basic/${item.id}`}
-																	className={cn(
-																		"text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors rounded-md",
-																		pathname === `/chat/basic/${item.id}` &&
-																			"bg-neutral-800 text-white"
-																	)}
-																>
-																	<span className="truncate">
-																		{item.chatName}
-																	</span>
-																</Link>
-															</SidebarMenuButton>
-														</SidebarMenuSubItem>
-													))}
-												</SidebarMenuSub>
-											</CollapsibleContent>
-										</SidebarMenuItem>
-									</Collapsible>
+											</SidebarMenuItem>
+										);
+									})}
 								</SidebarMenu>
-							</SidebarGroup>
-						) : null}
+							</SidebarGroupContent>
+						</SidebarGroup>
 					</>
 				) : null}
 
