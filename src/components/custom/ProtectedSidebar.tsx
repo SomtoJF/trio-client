@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef, ReactNode } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
 	Sidebar,
 	SidebarContent,
